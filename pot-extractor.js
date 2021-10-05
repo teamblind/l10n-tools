@@ -205,7 +205,8 @@ export class PotExtractor {
             const ast = babelParser.parse(src, getBabelParserOptions({
                 sourceType: 'module',
                 sourceFilename: filename,
-                startLine: startLine
+                startLine: startLine,
+                plugins: ['typescript']
             }))
             this.extractJsNode(filename, src, ast)
         } catch (err) {
@@ -219,7 +220,8 @@ export class PotExtractor {
                 sourceType: 'module',
                 plugins: ['jsx'],
                 sourceFilename: filename,
-                startLine: startLine
+                startLine: startLine,
+                plugins: ['typescript']
             }))
             this.extractJsNode(filename, src, ast)
         } catch (err) {
@@ -398,7 +400,8 @@ export class PotExtractor {
             const ast = babelParser.parse('(' + src + ')', getBabelParserOptions({
                 sourceType: 'script',
                 sourceFilename: filename,
-                startLine: startLine
+                startLine: startLine,
+                plugins: ['typescript']
             }))
             this.extractJsNode(filename, src, ast)
         } catch (err) {
@@ -411,7 +414,8 @@ export class PotExtractor {
             const ast = babelParser.parse('(' + src + ')', getBabelParserOptions({
                 sourceType: 'script',
                 sourceFilename: filename,
-                startLine: startLine
+                startLine: startLine,
+                plugins: ['typescript']
             }))
             this.extractJsIdentifierNode(filename, src, ast)
         } catch (err) {
@@ -424,7 +428,8 @@ export class PotExtractor {
             const ast = babelParser.parse('(' + src + ')', getBabelParserOptions({
                 sourceType: 'script',
                 sourceFilename: filename,
-                startLine: startLine
+                startLine: startLine,
+                plugins: ['typescript']
             }))
             this.extractJsObjectNode(filename, src, ast, paths)
         } catch (err) {

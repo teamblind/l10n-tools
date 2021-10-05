@@ -15,6 +15,7 @@ export default async function (domainName, config, potPath) {
     keywords.add('vm.$tc')
     keywords.add('this.$tc')
     keywords.add('app.i18n.tc')
+    keywords.add('root.$t')
 
     const extractor = PotExtractor.create(domainName, {
         tagNames: ['i18n'],
