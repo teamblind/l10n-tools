@@ -5,7 +5,7 @@ import {getSrcPaths} from '../common'
 import {PotExtractor} from '../pot-extractor'
 
 export default async function (domainName, config, potPath) {
-    const srcPaths = await getSrcPaths(config, ['.vue', '.js'])
+    const srcPaths = await getSrcPaths(config, ['.vue', '.js', '.ts'])
     const keywords = new Set(config.get('keywords', []))
     keywords.add('$t')
     keywords.add('vm.$t')
@@ -20,6 +20,7 @@ export default async function (domainName, config, potPath) {
     keywords.add('context.root.$t')
     keywords.add('setupCtx.root.$t')
     keywords.add('setupContext.root.$t')
+    keywords.add('root.$tc')
     keywords.add('ctx.root.$tc')
     keywords.add('context.root.$tc')
     keywords.add('setupCtx.root.$tc')
@@ -32,14 +33,14 @@ export default async function (domainName, config, potPath) {
         markers: [{start: '{{', end: '}}'}],
         keywords: keywords
     })
-    log.info('extractPot', 'extracting from .vue, .js files')
+    log.info('extractPot', 'extracting from .vue, .js, and .ts files')
     for (const srcPath of srcPaths) {
         log.verbose('extractPot', `processing '${srcPath}'`)
         const ext = path.extname(srcPath)
         if (ext === '.vue') {
             const input = fs.readFileSync(srcPath, {encoding: 'UTF-8'})
             extractor.extractVue(srcPath, input)
-        } else if (ext === '.js') {
+        } else if (['.js', '.ts'].includes(ext)) {
             const input = fs.readFileSync(srcPath, {encoding: 'UTF-8'})
             extractor.extractJsModule(srcPath, input)
         } else {
