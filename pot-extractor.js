@@ -218,10 +218,9 @@ export class PotExtractor {
         try {
             const ast = babelParser.parse(src, getBabelParserOptions({
                 sourceType: 'module',
-                plugins: ['jsx'],
+                plugins: ['jsx', 'typescript'],
                 sourceFilename: filename,
                 startLine: startLine,
-                plugins: ['typescript']
             }))
             this.extractJsNode(filename, src, ast)
         } catch (err) {
@@ -491,7 +490,7 @@ export class PotExtractor {
 
     extractTsNode (filename, src, ast, startLine = 1) {
         const visit = node => {
-            if (node.kind === ts.SyntaxKind.CallExpression) {
+            if ([ts.SyntaxKind.PropertyAccessExpression, ts.SyntaxKind.CallExpression].includes(node.kind)) {
                 const pos = findNonSpace(src, node.pos)
                 for (const {objectName, propName, position} of this.keywordDefs) {
                     if (objectName != null) {
@@ -509,6 +508,23 @@ export class PotExtractor {
                                     } catch (err) {
                                         log.warn('extractTsNode', err.message)
                                         log.warn('extractTsNode', `'${src.substring(pos, node.end)}': (${filename}:${getLineTo(src, pos, startLine)})`)
+                                    }
+                                } else if (node.parent.kind === ts.SyntaxKind.CallExpression) {
+                                    const parent = node.parent
+                                    // console.log(parent.kind, parent.arguments, parent.expression.name.text);
+
+                                    if (parent.expression.name && parent.expression.name.text === propName) {
+                                        // console.log('####');
+                                        // console.log(node.end);
+                                        try {
+                                            const ids = this._evaluateTsArgumentValues(parent.arguments[position])
+                                            for (const id of ids) {
+                                                this.addMessage({filename, line: getLineTo(src, pos, startLine)}, id)
+                                            }
+                                        } catch (err) {
+                                            log.warn('extractTsNode', err.message)
+                                            log.warn('extractTsNode', `'${src.substring(pos, node.end)}': (${filename}:${getLineTo(src, pos, startLine)})`)
+                                        }
                                     }
                                 }
                             }
@@ -706,8 +722,15 @@ export class PotExtractor {
 function parseKeyword(keyword) {
     const [name, _pos] = keyword.split(':')
     const position = _pos ? Number.parseInt(_pos) : 0
-    const [name1, name2] = name.split('.')
-    if (name2) {
+    const [name1, name2, name3] = name.split('.')
+
+    if (name3) {
+        return {
+            objectName: name1,
+            propName: name3,
+            position: position
+        }
+    } else if (name2) {
         return {
             objectName: name1,
             propName: name2,
