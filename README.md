@@ -72,7 +72,7 @@ Localization tools
       google-docs.client-secret-path           구글 문서 동기화 API 호출시 사용할 secret 파일 위치
 ```
 
-### How to install
+### How to global install
 ```
 sudo npm i -g --unsafe git+https://github.com/teamblind/l10n-tools
 ```
