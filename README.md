@@ -71,3 +71,8 @@ Localization tools
       domains.[domain].google-docs.sheet-name  도메인 별로 동기화에 사용할 구글 문서 내 시트 이름
       google-docs.client-secret-path           구글 문서 동기화 API 호출시 사용할 secret 파일 위치
 ```
+
+### How to global install
+```
+sudo npm i -g --unsafe git+https://github.com/teamblind/l10n-tools
+```
